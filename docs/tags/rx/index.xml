@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rx on Odín&#39;s page</title>
+    <link>http://odindelrio.com/tags/rx/</link>
+    <description>Recent content in Rx on Odín&#39;s page</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 17 Dec 2017 15:37:01 +0100</lastBuildDate>
+    
+	<atom:link href="http://odindelrio.com/tags/rx/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Aggregating data with Rx.concatMapEager</title>
+      <link>http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/</link>
+      <pubDate>Sun, 17 Dec 2017 15:37:01 +0100</pubDate>
+      
+      <guid>http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/</guid>
+      <description>Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
+Let&amp;rsquo;s imagine the next scenario: We have the Follower entity:
+Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:</description>
+    </item>
+    
+  </channel>
+</rss>

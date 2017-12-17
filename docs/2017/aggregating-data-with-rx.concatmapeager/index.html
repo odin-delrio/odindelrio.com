@@ -1,0 +1,657 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.31.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>Aggregating data with Rx.concatMapEager</title>
+    <meta name="author" content="Odín del Río">
+    <meta name="keywords" content="">
+
+    <link rel="icon" href="http://odindelrio.com/favicon.png">
+    
+
+    
+    <meta name="description" content="Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
+Let&rsquo;s imagine the next scenario: We have the Follower entity:
+Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:">
+    <meta property="og:description" content="Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
+Let&rsquo;s imagine the next scenario: We have the Follower entity:
+Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Aggregating data with Rx.concatMapEager">
+    <meta property="og:url" content="/2017/aggregating-data-with-rx.concatmapeager/">
+    <meta property="og:site_name" content="Odín&#39;s page">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Odín&#39;s page">
+    <meta name="twitter:description" content="Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
+Let&rsquo;s imagine the next scenario: We have the Follower entity:
+Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:">
+    
+      <meta name="twitter:creator" content="@odin-delrio">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/165e9e361b4836a10493cccb37605b53?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="http://odindelrio.com/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://odindelrio.com/">Odín&#39;s page</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://odindelrio.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/165e9e361b4836a10493cccb37605b53?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://odindelrio.com/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/165e9e361b4836a10493cccb37605b53?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Odín del Río</h4>
+        
+          <h5 class="sidebar-profile-bio">From Galicia, living in Barcelona, trying to code since 2010&hellip;</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/odin-delrio" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/6292842/od%C3%ADn-del-r%C3%ADo-pi%C3%B1eiro" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://odindelrio.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      Aggregating data with Rx.concatMapEager
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-17T15:37:01&#43;01:00">
+        
+  December 17, 2017
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>Sometimes, we have the need of aggregating data at read time.
+The situation could be that we are developing in client side without proper APIs,
+or maybe our developing context is a backend service without all the needed information.</p>
+
+<p>Let&rsquo;s imagine the next scenario:
+We have the <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/Follower.java">Follower</a> entity:</p>
+
+<pre><code>Follower
+    id
+    name
+</code></pre>
+
+<p>We can obtain our followers by using our <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/FollowersRepository.java">FollowersRepository</a>, but,
+we want to return to our clients something like:</p>
+
+<pre><code>AggregatedFollower
+    id
+    name
+    numberOfFollowers
+    numberOfFollowings
+</code></pre>
+
+<p>We will need to obtain the rest of the data from somewhere else&hellip;
+Then, we will create the <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfile.java">PublicProfile</a> entity which have the followers/followings stats.</p>
+
+<p>Solving this in an imperative way could be something like:</p>
+
+<pre><code>// pseudocode
+aggregatedFollowers = []
+followers = FollowersRepostiry.get(targetUserId)
+
+foreach(followers as follower)
+    aggregatedFollowers += new AggregatedFollower(
+        follower, 
+        PublicProfileRepository.get(follower.getId())
+    )
+    
+return aggregatedFollowers
+</code></pre>
+
+<blockquote>
+<h3 id="wait-do-you-want-to-solve-this-by-doing-n-calls-why-aren-t-you-listening-to-service-events-and-replicating-the-needed-data-locally">Wait, do you want to solve this by doing N calls? why aren&rsquo;t you listening to service events and replicating the needed data locally?</h3>
+
+<p>Yes, this could not be the best option for a production traffic application,
+if your followers page contains 20 elements, performing 20 http calls doesn&rsquo;t sound good, but:</p>
+
+<p>what if your API client is an internal back-office?</p>
+
+<p>or what if you are simply want to test a feature with the 1% of your users?
+maybe you don&rsquo;t want to change your replication data logic at this point.</p>
+</blockquote>
+
+<p>By using RxJava you can deal with this <a href="https://secure.phabricator.com/book/phabcontrib/article/n_plus_one/">n+1</a> problem in a paralleled way.</p>
+
+<h4 id="flatmap">flatMap</h4>
+
+<p>My first option for doing this was using the flatMap operator, assuming we have needed repositories returning
+reactive types, we can do something like:</p>
+
+<pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
+  return followersRepository
+    .getFollowers(userId)
+    .flatMap(
+        follower -&gt; publicProfileRepository
+            .getPublicProfile(follower.getId())
+            .map(publicProfile -&gt; new AggregatedFollower(follower, publicProfile))
+            .toFlowable()
+    );
+}
+</code></pre>
+
+<h4 id="concatmap">concatMap</h4>
+
+<p>But, the flatMap does not preserve the order of the elements&hellip; so, if that matter to us, we can&rsquo;t use the flatMap operator here.
+So, after searching a bit, I thought that the concatMap operator will do the work&hellip;</p>
+
+<pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
+  return followersRepository
+    .getFollowers(userId)
+    .concatMap(
+        follower -&gt; publicProfileRepository
+            .getPublicProfile(follower.getId())
+            .map(publicProfile -&gt; new AggregatedFollower(follower, publicProfile))
+            .toFlowable()
+    );
+}
+</code></pre>
+
+<p>This worked, but, calls are made sequentially, so, if each publicProfile call takes 1 second&hellip; you know.</p>
+
+<h4 id="concatmapeager">concatMapEager</h4>
+
+<pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
+  return followersRepository
+    .getFollowers(userId)
+    .concatMapEager(
+        follower -&gt; publicProfileRepository
+            .getPublicProfile(follower.getId())
+            .map(publicProfile -&gt; new AggregatedFollower(follower, publicProfile))
+            .toFlowable()
+    );
+}
+</code></pre>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://odindelrio.com/tags/rx/">rx</a>
+
+  <a class="tag tag--primary tag--small" href="http://odindelrio.com/tags/rxjava/">rxjava</a>
+
+  <a class="tag tag--primary tag--small" href="http://odindelrio.com/tags/concat-map-eager/">concat map eager</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2017 Odín del Río. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fodindelrio.com%2F2017%2Faggregating-data-with-rx.concatmapeager%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http%3A%2F%2Fodindelrio.com%2F2017%2Faggregating-data-with-rx.concatmapeager%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http%3A%2F%2Fodindelrio.com%2F2017%2Faggregating-data-with-rx.concatmapeager%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/165e9e361b4836a10493cccb37605b53?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Odín del Río</h4>
+    
+      <div id="about-card-bio">From Galicia, living in Barcelona, trying to code since 2010&hellip;</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Software whatever
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Spain
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/">
+                <h3 class="media-heading">Aggregating data with Rx.concatMapEager</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2017
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
+Let&rsquo;s imagine the next scenario: We have the Follower entity:
+Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         1 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('http://odindelrio.com/images/cover.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="http://odindelrio.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+    
+  </body>
+</html>
+
