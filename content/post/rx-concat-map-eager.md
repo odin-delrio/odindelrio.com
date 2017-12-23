@@ -88,7 +88,7 @@ And, it worked! But, calls are made sequentially, so, if each publicProfile call
 N seconds to complete the request...
 
 The fact that the concatMap is executed sequentially is useful if your are performing write operations. For our case,
-in which we are only reading, we can assume do all the job at the same time.
+in which we are only reading, we can assume to do all the job at the same time.
 
 #### flatMap and manual ordering
 When I did this the first time, I was using RxJava 1 (RxJava 2 was not released), so, no other options existed and I
@@ -158,5 +158,5 @@ public class PublicProfileRepository {
   // ...
 ```
 
-You can see all the code in my github repository: https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager
+You can find all the implementations and tests in my github repository: https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager
 

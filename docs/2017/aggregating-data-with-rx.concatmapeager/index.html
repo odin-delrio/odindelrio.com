@@ -325,7 +325,7 @@ so, since order matters for my case, I searched a bit and I found the concatMap 
 N seconds to complete the request&hellip;</p>
 
 <p>The fact that the concatMap is executed sequentially is useful if your are performing write operations. For our case,
-in which we are only reading, we can assume do all the job at the same time.</p>
+in which we are only reading, we can assume to do all the job at the same time.</p>
 
 <h4 id="flatmap-and-manual-ordering">flatMap and manual ordering</h4>
 
@@ -396,7 +396,7 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
   // ...
 </code></pre>
 
-<p>You can see all the code in my github repository: <a href="https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager">https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager</a></p>
+<p>You can find all the implementations and tests in my github repository: <a href="https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager">https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager</a></p>
               
             </div>
           </div>
