@@ -272,7 +272,7 @@ we want to return to our clients something like:</p>
     numberOfFollowings
 </code></pre>
 
-<p>We will need to obtain the rest of the data from somewhere else&hellip;
+<p>We will need to obtain the other fields from somewhere else&hellip;
 Then, we will create the <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfile.java">PublicProfile</a> entity which have the followers/followings stats.</p>
 
 <p>Solving this in an imperative way could be something like:</p>
@@ -293,8 +293,8 @@ return aggregatedFollowers
 <blockquote>
 <h3 id="wait-do-you-want-to-solve-this-by-doing-n-calls-why-aren-t-you-listening-to-service-events-and-replicating-the-needed-data-locally">Wait, do you want to solve this by doing N calls? why aren&rsquo;t you listening to service events and replicating the needed data locally?</h3>
 
-<p>Yes, this could not be the best option for a production traffic application,
-if your followers page contains 20 elements, performing 20 http calls doesn&rsquo;t sound good, but:</p>
+<p>Yes, this could not be the best option for a high traffic application,
+if your followers page contains 20 elements, performing 20 http calls in each request doesn&rsquo;t sound good, but:</p>
 
 <p>what if your API client is an internal back-office?</p>
 
@@ -302,29 +302,12 @@ if your followers page contains 20 elements, performing 20 http calls doesn&rsqu
 maybe you don&rsquo;t want to change your replication data logic at this point.</p>
 </blockquote>
 
-<p>By using RxJava you can deal with this <a href="https://secure.phabricator.com/book/phabcontrib/article/n_plus_one/">n+1</a> problem in a paralleled way.</p>
-
-<h4 id="flatmap">flatMap</h4>
-
-<p>My first option for doing this was using the flatMap operator, assuming we have needed repositories returning
-reactive types, we can do something like:</p>
-
-<pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
-  return followersRepository
-    .getFollowers(userId)
-    .flatMap(
-        follower -&gt; publicProfileRepository
-            .getPublicProfile(follower.getId())
-            .map(publicProfile -&gt; new AggregatedFollower(follower, publicProfile))
-            .toFlowable()
-    );
-}
-</code></pre>
+<p>By using RxJava you can deal with this <a href="https://secure.phabricator.com/book/phabcontrib/article/n_plus_one/">n+1</a> problem in a easy and parallelized way.</p>
 
 <h4 id="concatmap">concatMap</h4>
 
-<p>But, the flatMap does not preserve the order of the elements&hellip; so, if that matter to us, we can&rsquo;t use the flatMap operator here.
-So, after searching a bit, I thought that the concatMap operator will do the work&hellip;</p>
+<p>I knew that the flatMap operator does not preserve the order of the elements&hellip;
+so, since order matters for my case, I searched a bit and I found the concatMap and I tried it:</p>
 
 <pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
   return followersRepository
@@ -338,9 +321,50 @@ So, after searching a bit, I thought that the concatMap operator will do the wor
 }
 </code></pre>
 
-<p>This worked, but, calls are made sequentially, so, if each publicProfile call takes 1 second&hellip; you know.</p>
+<p>And, it worked! But, calls are made sequentially, so, if each publicProfile call takes 1 second you will have to wait
+N seconds to complete the request&hellip;</p>
+
+<p>The fact that the concatMap is executed sequentially is useful if your are performing write operations. For our case,
+in which we are only reading, we can assume do all the job at the same time.</p>
+
+<h4 id="flatmap-and-manual-ordering">flatMap and manual ordering</h4>
+
+<p>When I did this the first time, I was using RxJava 1 (RxJava 2 was not released), so, no other options existed and I
+wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/aggregatedfollowers/FlatMapWithManualOrderFollowersRepository.java">custom logic to preserve the order</a>&hellip;</p>
+
+<pre><code class="language-java">  public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
+    return followersRepository
+        .getFollowers(userId)
+        .toList()
+        .toFlowable()
+        .flatMap(
+            followersList -&gt; {
+              List&lt;String&gt; orderedIds = followersList
+                  .stream()
+                  .map(Follower::getId)
+                  .collect(Collectors.toList());
+
+              return Flowable
+                  .fromIterable(followersList)
+                  .flatMap(follower -&gt;
+                      publicProfileRepository
+                          .getPublicProfile(follower.getId())
+                          .map(publicProfile -&gt; new AggregatedFollower(follower, publicProfile))
+                          .toFlowable()
+                  )
+                  .toSortedList(Comparator.comparingInt(o -&gt; orderedIds.indexOf(o.getFollower().getId())))
+                  .toFlowable()
+                  .flatMap(Flowable::fromIterable);
+            }
+        );
+  }
+</code></pre>
+
+<p>But, don&rsquo;t do that! Use the RxJava 2 concatMapEager instead!</p>
 
 <h4 id="concatmapeager">concatMapEager</h4>
+
+<p>Right now, with RxJava 2, you can just do this by using the <code>concatMapEager</code> operator ;)</p>
 
 <pre><code class="language-java">public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
   return followersRepository
@@ -353,6 +377,26 @@ So, after searching a bit, I thought that the concatMap operator will do the wor
     );
 }
 </code></pre>
+
+<p>And that&rsquo;s it!</p>
+
+<h4 id="note-about-parallelism">Note about parallelism</h4>
+
+<p>Remember that RxJava is synchronous by default, so, this examples work in a parallelized way because I&rsquo;m
+configuring the schedulers in my rx chains by calling to the <code>subscribeOn</code> method when needed:</p>
+
+<pre><code>public class PublicProfileRepository {
+  // ...
+  public Maybe&lt;PublicProfile&gt; getPublicProfile(String userId) {
+    return Maybe
+        .fromCallable(() -&gt; blockingGetPublicProfile(userId))
+        .subscribeOn(Schedulers.io())
+        .filter(Objects::nonNull);
+  }
+  // ...
+</code></pre>
+
+<p>You can see all the code in my github repository: <a href="https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager">https://github.com/odin-delrio/coding-tests/tree/master/rx-concat-eager</a></p>
               
             </div>
           </div>
