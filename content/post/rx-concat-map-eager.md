@@ -6,6 +6,7 @@ tags:
  - rxjava
  - concat map eager
 thumbnailImagePosition: left
+thumbnailImage: images/flatmap-marble.png
 ---
 
 Sometimes, we have the need of aggregating data at read time.
