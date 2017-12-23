@@ -382,7 +382,7 @@ wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat
 
 <h4 id="note-about-parallelism">Note about parallelism</h4>
 
-<p>Remember that RxJava is synchronous by default, so, this examples work in a parallelized way because I&rsquo;m
+<p>Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I&rsquo;m
 configuring the schedulers in my rx chains by calling to the <code>subscribeOn</code> method when needed:</p>
 
 <pre><code>public class PublicProfileRepository {

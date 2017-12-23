@@ -143,7 +143,7 @@ public Flowable<AggregatedFollower> getFollowers(String userId) {
 And that's it!
 
 #### Note about parallelism
-Remember that RxJava is synchronous by default, so, this examples work in a parallelized way because I'm
+Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I'm
 configuring the schedulers in my rx chains by calling to the `subscribeOn` method when needed:
 
 ```
