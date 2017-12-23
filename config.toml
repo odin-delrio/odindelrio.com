@@ -34,9 +34,9 @@ publishDir = "docs"
 
 [author]
   name = "Odín del Río"
-  bio = "From Galicia, living in Barcelona, trying to code since 2010..."
+  bio = "From Galicia, living in Barcelona, working at Schibsted, trying to code since 2010..."
   job = "Software whatever"
-  location = "Spain"
+  location = "Barcelona, Spain"
   # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
   gravatarEmail = "odin.drp@gmail.com"
   # Your profile picture
@@ -120,7 +120,7 @@ publishDir = "docs"
   # If false it will flat categories.
   hierarchicalCategories = true
 
-  description = "Hugo tranquilpeak theme demo"
+  description = "Odín's page"
 
   # Customization
   # Define the behavior of the sidebar

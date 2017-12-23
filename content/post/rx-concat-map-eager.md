@@ -12,6 +12,8 @@ Sometimes, we have the need of aggregating data at read time.
 The situation could be that we are developing in client side without proper APIs, 
 or maybe our developing context is a backend service without all the needed information.
 
+<!--more-->
+
 Let's imagine the next scenario:
 We have the [Follower](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/Follower.java) entity: 
 

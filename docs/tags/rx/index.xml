@@ -17,9 +17,11 @@
       <pubDate>Sun, 17 Dec 2017 15:37:01 +0100</pubDate>
       
       <guid>http://odindelrio.com/2017/aggregating-data-with-rx.concatmapeager/</guid>
-      <description>Sometimes, we have the need of aggregating data at read time. The situation could be that we are developing in client side without proper APIs, or maybe our developing context is a backend service without all the needed information.
-Let&amp;rsquo;s imagine the next scenario: We have the Follower entity:
-Follower id name  We can obtain our followers by using our FollowersRepository, but, we want to return to our clients something like:</description>
+      <description>&lt;p&gt;Sometimes, we have the need of aggregating data at read time.
+The situation could be that we are developing in client side without proper APIs,
+or maybe our developing context is a backend service without all the needed information.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
