@@ -92,6 +92,13 @@ publishDir = "docs"
   pre = "<i class=\"sidebar-button-icon fa fa-lg fa-stack-overflow\"></i>"
   url = "https://stackoverflow.com/users/6292842/od%C3%ADn-del-r%C3%ADo-pi%C3%B1eiro"
 
+[[menu.links]]
+  weight = 3
+  identifier = "linkedin"
+  name = "Linkedin"
+  pre = "<i class=\"sidebar-button-icon fa fa-lg fa-linkedin\"></i>"
+  url = "https://www.linkedin.com/in/odindelrio/"
+
 [[menu.misc]]
   weight = 1
   identifier = "rss"
