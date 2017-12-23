@@ -36,7 +36,7 @@ AggregatedFollower
 ```
 
 We will need to obtain the other fields from somewhere else... 
-Then, we will create the [PublicProfile](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfile.java) entity which have the followers/followings stats.
+In this case, we have the [PublicProfile](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfile.java) entity (with the corresponding repository) which have the followers/followings stats.
 
 Solving this in an imperative way could be something like:
 
