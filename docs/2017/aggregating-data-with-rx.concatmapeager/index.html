@@ -352,7 +352,8 @@ in which we are only reading, we can assume to do all the job at the same time.<
 <p>When I did this the first time, I was using RxJava 1 (RxJava 2 was not released), so, no other options existed and I
 wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/aggregatedfollowers/FlatMapWithManualOrderFollowersRepository.java">custom logic to preserve the order</a>&hellip;</p>
 
-<pre><code class="language-java">  public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
+<pre><code class="language-java">  // don't waste your time understanding this! 
+  public Flowable&lt;AggregatedFollower&gt; getFollowers(String userId) {
     return followersRepository
         .getFollowers(userId)
         .toList()
@@ -406,7 +407,7 @@ wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat
 <h4 id="note-about-parallelism">Note about parallelism</h4>
 
 <p>Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I&rsquo;m
-configuring the schedulers in my rx chains by calling to the <code>subscribeOn</code> method when needed:</p>
+configuring the schedulers in my rx chains by calling to the <code>subscribeOn</code> method <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfileRepository.java#L17">when needed</a>:</p>
 
 <pre><code>public class PublicProfileRepository {
   // ...

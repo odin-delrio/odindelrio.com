@@ -95,6 +95,7 @@ When I did this the first time, I was using RxJava 1 (RxJava 2 was not released)
 wrote [custom logic to preserve the order](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/aggregatedfollowers/FlatMapWithManualOrderFollowersRepository.java)...
 
 ```java
+  // don't waste your time understanding this! 
   public Flowable<AggregatedFollower> getFollowers(String userId) {
     return followersRepository
         .getFollowers(userId)
@@ -148,7 +149,7 @@ And here the time taken for each strategy:
 
 #### Note about parallelism
 Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I'm
-configuring the schedulers in my rx chains by calling to the `subscribeOn` method when needed:
+configuring the schedulers in my rx chains by calling to the `subscribeOn` method [when needed](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/PublicProfileRepository.java#L17):
 
 ```
 public class PublicProfileRepository {
