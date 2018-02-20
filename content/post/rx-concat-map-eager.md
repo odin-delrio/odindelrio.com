@@ -156,8 +156,7 @@ public class PublicProfileRepository {
   public Maybe<PublicProfile> getPublicProfile(String userId) {
     return Maybe
         .fromCallable(() -> blockingGetPublicProfile(userId))
-        .subscribeOn(Schedulers.io())
-        .filter(Objects::nonNull);
+        .subscribeOn(Schedulers.io());
   }
   // ...
 ```

@@ -413,8 +413,7 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
   public Maybe&lt;PublicProfile&gt; getPublicProfile(String userId) {
     return Maybe
         .fromCallable(() -&gt; blockingGetPublicProfile(userId))
-        .subscribeOn(Schedulers.io())
-        .filter(Objects::nonNull);
+        .subscribeOn(Schedulers.io());
   }
   // ...
 </code></pre>
