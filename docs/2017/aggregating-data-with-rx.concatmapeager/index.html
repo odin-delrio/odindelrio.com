@@ -64,7 +64,7 @@ or maybe our developing context is a backend service without all the needed info
     
 
     
-      <meta property="og:image" content="http://odindelrio.com/images/flatmap-marble.png">
+      <meta property="og:image" content="http://odindelrio.com/images/rx-concat-map-eager/flatmap-marble.png">
     
     
     
@@ -400,6 +400,9 @@ wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat
 
 <p>And that&rsquo;s it!</p>
 
+<p>And here the time taken for each strategy:
+<img src="http://odindelrio.com/images/rx-concat-map-eager/test-times.png" style="width:100%;"></p>
+
 <h4 id="note-about-parallelism">Note about parallelism</h4>
 
 <p>Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I&rsquo;m
@@ -508,7 +511,7 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2017 Odín del Río. All Rights Reserved
+    &copy; 2018 Odín del Río. All Rights Reserved
   </span>
 </footer>
 

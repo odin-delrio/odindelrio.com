@@ -6,7 +6,7 @@ tags:
  - rxjava
  - concat map eager
 thumbnailImagePosition: left
-thumbnailImage: images/flatmap-marble.png
+thumbnailImage: images/rx-concat-map-eager/flatmap-marble.png
 ---
 
 Sometimes, we have the need of aggregating data at read time.
@@ -141,6 +141,10 @@ public Flowable<AggregatedFollower> getFollowers(String userId) {
 ```
 
 And that's it!
+
+And here the time taken for each strategy:
+<img src="/images/rx-concat-map-eager/test-times.png" style="width:100%;">
+
 
 #### Note about parallelism
 Keep in mind that RxJava is synchronous by default, so, this examples work in a parallelized way because I'm
