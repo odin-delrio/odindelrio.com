@@ -401,8 +401,13 @@ wrote <a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat
 
 <p>And that&rsquo;s it!</p>
 
-<p>And here the time taken for each strategy:
-<img src="http://odindelrio.com/images/rx-concat-map-eager/test-times.png" style="width:100%;"></p>
+<p>But&hellip; maybe you are worried about the concurrency, executing N threads concurrently could be problematic&hellip;
+You can use the overloaded <code>concatMapEager</code> method that allows to you to pass the <code>maxConcurrency</code>.
+<a href="https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/aggregatedfollowers/LimitedConcatEagerFollowersRepository.java">I wrote another example for that</a>.</p>
+
+<h4 id="and-here-the-time-taken-for-each-strategy">And here the time taken for each strategy:</h4>
+
+<p><img src="http://odindelrio.com/images/rx-concat-map-eager/test-times.png" style="width:100%;"></p>
 
 <h4 id="note-about-parallelism">Note about parallelism</h4>
 

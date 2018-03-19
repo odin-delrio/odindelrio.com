@@ -143,7 +143,11 @@ public Flowable<AggregatedFollower> getFollowers(String userId) {
 
 And that's it!
 
-And here the time taken for each strategy:
+But... maybe you are worried about the concurrency, executing N threads concurrently could be problematic...
+You can use the overloaded `concatMapEager` method that allows to you to pass the `maxConcurrency`.
+[I wrote another example for that](https://github.com/odin-delrio/coding-tests/blob/master/rx-concat-eager/src/main/java/org/odin/aggregatedfollowers/LimitedConcatEagerFollowersRepository.java).
+
+#### And here the time taken for each strategy:
 <img src="/images/rx-concat-map-eager/test-times.png" style="width:100%;">
 
 
