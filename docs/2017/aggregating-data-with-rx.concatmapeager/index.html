@@ -498,6 +498,12 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
         
       
       
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
       <li class="post-action">
         
           <a class="post-action-btn btn btn--default" href="#">
@@ -510,6 +516,10 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
 
 
             
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
               
             
           </div>
@@ -573,6 +583,12 @@ configuring the schedulers in my rx chains by calling to the <code>subscribeOn</
           </li>
         
       
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
       
       <li class="post-action">
         
@@ -727,6 +743,28 @@ $(document).ready(function() {
 
 
   
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'http:\/\/odindelrio.com\/2017\/aggregating-data-with-rx.concatmapeager\/';
+          
+            this.page.identifier = '\/2017\/aggregating-data-with-rx.concatmapeager\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'odindelrio';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
     
   
 
